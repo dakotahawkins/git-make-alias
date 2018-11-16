@@ -27,7 +27,7 @@ main() {
     done
 
     git fetch "$source_remote" || error_exit
-    git push "$force_opt" refs/remotes/origin/*:refs/heads/* refs/heads/*:refs/heads/* refs/tags/*:refs/tags/* || error_exit
+    git push "$force_opt" "$dest_remote" refs/remotes/origin/*:refs/heads/* refs/heads/*:refs/heads/* refs/tags/*:refs/tags/* || error_exit
 }
 
 error_exit() {

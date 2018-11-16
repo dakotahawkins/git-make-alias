@@ -13,6 +13,7 @@ main() {
                 ;;
             -*)
                 error_exit "Unexpected option: \"$1\""
+                ;;
             *)
                 [[ "$remote_opts" -eq 0 ]] && {
                     remote_opts=1

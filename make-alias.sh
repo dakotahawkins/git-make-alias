@@ -27,7 +27,7 @@ main() {
         }
     fi
 
-    [[ -d "$alias_dir" ]] || mkdir "$alias_dir" || {
+    [[ -d "$alias_dir" ]] || mkdir -p "$alias_dir" || {
         error_exit "Failed to create git-make-alias dir \"$alias_dir\""
     }
 

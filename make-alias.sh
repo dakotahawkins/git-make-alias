@@ -161,13 +161,6 @@ no_error_exit() {
     exit 0
 }
 
-declare -r make_alias="${GIT_MAKE_ALIAS_CMD:-make-alias}"
-declare -r alias_dir="$(readlink -f ${GIT_MAKE_ALIAS_DIR:-~/.git-make-alias})"
-declare -r script_dir="$(dirname "$(readlink -f "$0")")"
-cd "$script_dir" || {
-    error_exit "Failed to cd to running script directory"
-}
-
 install_files() {
     readarray t <<'    EOF'
         #!/bin/bash
@@ -227,6 +220,13 @@ install_files() {
     printf '%s' "${ga[@]#        }" > "$alias_dir/.gitattributes" || {
         error_exit "Failed to install \"$alias_dir/.gitattributes\""
     }
+}
+
+declare -r make_alias="${GIT_MAKE_ALIAS_CMD:-make-alias}"
+declare -r alias_dir="$(readlink -f ${GIT_MAKE_ALIAS_DIR:-~/.git-make-alias})"
+declare -r script_dir="$(dirname "$(readlink -f "$0")")"
+cd "$script_dir" || {
+    error_exit "Failed to cd to running script directory"
 }
 
 main "$@" && no_error_exit "Done!" || error_exit

@@ -229,4 +229,6 @@ cd "$script_dir" || {
     error_exit "Failed to cd to running script directory"
 }
 
+unset GIT_DIR
+unset GIT_WORK_TREE
 main "$@" && no_error_exit "Done!" || error_exit

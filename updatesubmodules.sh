@@ -33,6 +33,8 @@ main() {
             | sort -u )
 
     [[ -n "${NEW_SUBMODULES[@]}" ]] && {
+        echo
+        echo "Updating submodules..."
         git submodule update --init --recursive || {
             error_exit "Failed to update submodules."
         }
@@ -40,6 +42,7 @@ main() {
         #git submodule --quiet foreach --recursive 'git-lfs pull' || {
         #    error_exit "Failed to pull submodule LFS files."
         #}
+        echo "Done."
     }
 
     [[ -n "${gitmodules_source_old[@]}" ]] || no_error_exit
@@ -58,10 +61,16 @@ main() {
                 <( printf "%s\n" "${NEW_SUBMODULES[@]}" ) )
     [[ -n "${DIRS_TO_REMOVE[@]}" ]] || no_error_exit
 
+    declare -a dirs_with_tracked_files
     declare -a failed_to_remove_dirs
     local removed_any_dirs=
     for dir in "${DIRS_TO_REMOVE[@]}"; do
         [[ -d "${worktree_dir}/${dir}" ]] || continue
+
+        [[ $(git ls-files "${worktree_dir}/${dir}" | wc -l) -eq 0 ]] || {
+            dirs_with_tracked_files+=("  ${worktree_dir}/${dir}")
+            continue
+        }
 
         [[ -z "$removed_any_dirs" ]] && {
             echo
@@ -74,6 +83,16 @@ main() {
             failed_to_remove_dirs+=("  ${worktree_dir}/${dir}")
         }
     done
+
+    [[ -n "${dirs_with_tracked_files[@]}" ]] && {
+        echo
+        echo "Directories contain tracked files and weren't removed:"
+        for dir in "${dirs_with_tracked_files[@]}"; do
+            echo "$dir"
+        done
+        echo
+    }
+
     [[ -n "${failed_to_remove_dirs[@]}" ]] && {
         error_exit "Failed to remove directories:" "${failed_to_remove_dirs[@]}"
     }
